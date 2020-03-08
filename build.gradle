@@ -1,0 +1,51 @@
+
+plugins {
+    id 'application'
+    id 'jacoco'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.jetbrains', name: 'annotations', version: '18.0.0'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.4.0'
+}
+
+compileJava {
+    doFirst {
+        options.compilerArgs = ['--module-path', classpath.asPath]
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    finalizedBy jacocoTestReport
+}
+
+//Jars everything together
+jar {
+    manifest {
+        attributes 'Main-Class': 'AddressBookGUI'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+//Builds and runs a jar executable
+task buildAndRun(type: JavaExec) {
+    buildAndRun.dependsOn jar
+    classpath = files('build/libs/AddressBook.jar')
+    classpath += sourceSets.main.runtimeClasspath
+    main = 'AddressBookGUI'
+}
+
+mainClassName = 'AddressBookGUI'
+sourceSets.main.java.srcDirs=['src']
+sourceSets.test.java.srcDirs=['tests']

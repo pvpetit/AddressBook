@@ -1,0 +1,20 @@
+#Ignore project file
+*.iml
+.idea/
+.gradle/
+.vscode
+.project
+.classpath
+.settings/
+gradle/
+build/
+
+#Binaries
+bin/
+
+#Macos files
+.DS_Store
+
+#Gradle
+gradlew
+gradlew.bat
